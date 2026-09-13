@@ -47,6 +47,14 @@ VITE_FIREBASE_APP_ID=
 - Firestore 저장 함수의 `serverTimestamp()` 사용
 - 견적에 구매사·공급사 회사 ID를 명시해 향후 비공개 Security Rules 적용 가능
 
+## OpenDART 기본정보 추가 수집
+
+`node scripts/collectDartProfiles.mjs`를 실행하면 종목코드가 있는 기업 중 JSON에 아직 없는 기업을 수집합니다.
+배포된 `dartCompanyProfileV2` 함수가 Firestore에 저장된 정보를 먼저 반환하고, 없을 때만 OpenDART를 호출해 저장합니다.
+수집 결과는 `public/data/dart-company-profiles.json`에 50건마다 원자적으로 저장됩니다.
+재실행 시 저장된 기업을 건너뛰며, 연속 실패 시 중단해 무분별한 재호출을 방지합니다.
+갱신한 JSON을 사이트에 반영하려면 빌드 후 Hosting에 배포합니다.
+
 ## 다음 개발 우선순위
 
 1. 기업 가입 및 인증
