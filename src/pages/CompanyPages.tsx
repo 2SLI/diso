@@ -634,7 +634,7 @@ export function CompanyDetailPage() {
                     웹사이트 방문
                   </a>
                 ) : (
-                  '웹사이트 미등록'
+                  '웹사이트 준비 중'
                 )}
               </p>
             </div>

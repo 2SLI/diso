@@ -3,62 +3,10 @@ import { Link } from 'react-router-dom';
 import { CompanyCard } from '../components/company/CompanyCard';
 import { Badge, Button, Input } from '../components/common/ui';
 import { useCompanies } from '../hooks/useCompanies';
-import type { Company } from '../types/company';
-
-const sampleCompanies: Company[] = [
-  {
-    id: 'precision-tech',
-    name: '프리시전테크',
-    businessNumber: '',
-    industry: '정밀 제조',
-    description: 'CNC 가공과 시제품 제작을 전문으로 하는 제조 파트너입니다.',
-    website: '',
-    region: '경기 화성',
-    offerings: ['CNC 가공', '시제품 제작', '소량 생산'],
-    needs: ['표면처리', '물류'],
-    capabilities: ['5축 가공'],
-    certifications: ['ISO 9001'],
-    serviceRegions: ['전국'],
-    collaborationTypes: ['SUPPLIER', 'OEM'],
-    verified: true,
-  },
-  {
-    id: 'logi-flow',
-    name: '로지플로우',
-    businessNumber: '',
-    industry: '물류·유통',
-    description: '기업 맞춤형 풀필먼트와 전국 물류 네트워크를 제공합니다.',
-    website: '',
-    region: '서울 강서',
-    offerings: ['풀필먼트', 'B2B 물류'],
-    needs: ['포장재', 'WMS 연동'],
-    capabilities: ['당일 출고'],
-    certifications: [],
-    serviceRegions: ['전국'],
-    collaborationTypes: ['PARTNER', 'DISTRIBUTOR'],
-    verified: true,
-  },
-  {
-    id: 'green-circuit',
-    name: '그린서킷',
-    businessNumber: '',
-    industry: '전자부품',
-    description: '친환경 전원 모듈과 산업용 SMPS를 개발·생산합니다.',
-    website: '',
-    region: '충남 아산',
-    offerings: ['SMPS', '전원 모듈'],
-    needs: ['PCB 조립', 'OEM'],
-    capabilities: ['EMI 시험'],
-    certifications: ['ISO 14001'],
-    serviceRegions: ['아시아'],
-    collaborationTypes: ['SUPPLIER', 'ODM'],
-    verified: false,
-  },
-];
 
 export function HomePage() {
   const { companies } = useCompanies();
-  const featured = companies.length ? companies.slice(0, 3) : sampleCompanies;
+  const featured = companies.slice(0, 3);
 
   return (
     <>
@@ -116,22 +64,24 @@ export function HomePage() {
           </p>
         </div>
       </section>
-      <section className="mx-auto max-w-7xl px-4 py-10 md:py-16">
-        <div className="flex items-end justify-between">
-          <div>
-            <p className="text-xs font-semibold text-brand-600 md:text-sm">RECOMMENDED</p>
-            <h2 className="mt-1 text-xl font-bold md:text-2xl">추천 기업</h2>
+      {featured.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-10 md:py-16">
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-xs font-semibold text-brand-600 md:text-sm">PARTNERBASE</p>
+              <h2 className="mt-1 text-xl font-bold md:text-2xl">등록 기업</h2>
+            </div>
+            <Link to="/companies" className="text-xs font-semibold text-brand-600 md:text-sm">
+              전체 보기
+            </Link>
           </div>
-          <Link to="/companies" className="text-xs font-semibold text-brand-600 md:text-sm">
-            전체 보기
-          </Link>
-        </div>
-        <div className="mt-5 grid gap-3 md:mt-7 md:grid-cols-3 md:gap-5">
-          {featured.map((company) => (
-            <CompanyCard key={company.id} company={company} />
-          ))}
-        </div>
-      </section>
+          <div className="mt-5 grid gap-3 md:mt-7 md:grid-cols-3 md:gap-5">
+            {featured.map((company) => (
+              <CompanyCard key={company.id} company={company} />
+            ))}
+          </div>
+        </section>
+      )}
     </>
   );
 }
