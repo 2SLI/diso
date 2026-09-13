@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  body {
+    @apply m-0 bg-slate-50 font-sans antialiased;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}

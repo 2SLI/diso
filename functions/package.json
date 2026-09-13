@@ -1,0 +1,14 @@
+{
+  "name": "partnerbase-functions",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^9.1.0",
+    "firebase-admin": "latest",
+    "firebase-functions": "latest"
+  }
+}
