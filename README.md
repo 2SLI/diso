@@ -62,7 +62,13 @@ VITE_FIREBASE_APP_ID=
 `src/data`의 통신판매업·튜닝정비·전문연구·방송·근로자공급 자료를 대상으로 하며,
 `publicBusinessProfiles`에 출처와 기준일, 원본 행을 저장합니다. 통계와 중복 파일은 가져오지 않습니다.
 사업자번호가 없는 경우 출처·이름·주소·지역 기준으로 식별하므로 서로 다른 출처의 동일 사업자는 별도로 남을 수 있습니다.
-기존 `companies` 가입 기업과 구분되며, 현재 기업 검색 UI에는 아직 연결되지 않습니다.
+기존 `companies` 가입 기업 및 OpenDART 기업과 별도 섹션으로 기업 검색 UI에 표시합니다.
+이름·업종·주소 검색, 업종/지역 필터, 24건씩 더 보기와 출처·기준일이 있는 상세 화면을 제공합니다.
+
+DB 갱신 후 `node scripts/exportPublicBusinessDirectory.mjs`로 공개 검색 목록을 추출합니다.
+`public/data/public-businesses.json`에는 표시용 필드만 포함하며, 원본 행·대표자·사업자번호는 내보내지 않습니다.
+목록은 방문자마다 Firestore 전체를 조회하지 않도록 Hosting에서 제공하며, 자동 실시간 동기화는 아닙니다.
+추출 후 `npm run build` 및 `npx firebase deploy --only hosting --project velder-381f3`로 반영합니다.
 
 ## 다음 개발 우선순위
 

@@ -18,6 +18,7 @@ const CompaniesPage = lazy(async () => ({
 const CompanyDetailPage = lazy(async () => ({
   default: (await import('../pages/CompanyPages')).CompanyDetailPage,
 }));
+const PublicBusinessDetailPage = lazy(() => import('../pages/PublicBusinessDetailPage'));
 const MyCompanyPage = lazy(async () => ({
   default: (await import('../pages/CompanyPages')).MyCompanyPage,
 }));
@@ -57,6 +58,7 @@ export function AppRouter() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/join-company" element={<JoinCompanyPage />} />
           <Route path="/companies" element={<CompaniesPage />} />
+          <Route path="/companies/public/:businessId" element={<PublicBusinessDetailPage />} />
           <Route path="/companies/:companyId" element={<CompanyDetailPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<DashboardPage />} />

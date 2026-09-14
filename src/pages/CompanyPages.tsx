@@ -16,9 +16,10 @@ import {
   X,
 } from 'lucide-react';
 import { CompanyCard } from '../components/company/CompanyCard';
+import { PublicBusinessDirectory } from '../components/company/PublicBusinessDirectory';
 import { Badge, Button, Card, EmptyState, Input, Select, Textarea } from '../components/common/ui';
 import { TagInput } from '../components/common/TagInput';
-import { industryGroups, industries, regions } from '../constants/industries';
+import { industryGroups, regions } from '../constants/industries';
 import { useAuth } from '../hooks/useAuth';
 import { useCompanies, useCompany } from '../hooks/useCompanies';
 import { useMyCompany } from '../hooks/useMyCompany';
@@ -242,8 +243,9 @@ export function CompaniesPage() {
         )}
       </section>
       <p className="mt-3 text-xs text-slate-400">
-        {industries.length}개 세부 업종과 {regions.length}개 지역 기준으로 검색할 수 있습니다.
+        위 상세 필터는 PartnerBase 등록 기업에 적용됩니다. 공공데이터 업체는 아래 업종·지역 필터를 사용하세요.
       </p>
+      <PublicBusinessDirectory keyword={keyword} />
       <section className="mt-6 rounded-xl border border-amber-200 bg-amber-50/40 p-5 shadow-sm">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -319,7 +321,7 @@ export function CompaniesPage() {
         <section className="mt-8 rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm text-slate-500">
           <p className="text-xs font-semibold text-brand-600">PARTNERBASE</p>
           <p className="mt-1 font-medium text-slate-700">PartnerBase 등록 기업이 아직 없습니다.</p>
-          <p className="mt-1">위 OpenDART 공시기업은 외부 목록이며, 기업이 직접 등록한 협업 프로필은 여기에 표시됩니다.</p>
+          <p className="mt-1">위 공공데이터·OpenDART 기업은 외부 목록이며, 기업이 직접 등록한 협업 프로필은 여기에 표시됩니다.</p>
         </section>
       )}
     </div>
