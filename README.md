@@ -55,6 +55,15 @@ VITE_FIREBASE_APP_ID=
 재실행 시 저장된 기업을 건너뛰며, 연속 실패 시 중단해 무분별한 재호출을 방지합니다.
 갱신한 JSON을 사이트에 반영하려면 빌드 후 Hosting에 배포합니다.
 
+## 공공 사업자 CSV 등록
+
+공공 사업자 CSV의 DB 등록은 `node scripts/importPublicBusinesses.mjs`로 사전 검증한 뒤
+`node scripts/importPublicBusinesses.mjs --write`로 실행합니다. Firebase CLI 로그인 계정을 사용합니다.
+`src/data`의 통신판매업·튜닝정비·전문연구·방송·근로자공급 자료를 대상으로 하며,
+`publicBusinessProfiles`에 출처와 기준일, 원본 행을 저장합니다. 통계와 중복 파일은 가져오지 않습니다.
+사업자번호가 없는 경우 출처·이름·주소·지역 기준으로 식별하므로 서로 다른 출처의 동일 사업자는 별도로 남을 수 있습니다.
+기존 `companies` 가입 기업과 구분되며, 현재 기업 검색 UI에는 아직 연결되지 않습니다.
+
 ## 다음 개발 우선순위
 
 1. 기업 가입 및 인증
