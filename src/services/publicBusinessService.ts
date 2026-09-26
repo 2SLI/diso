@@ -47,6 +47,7 @@ export const publicBusinessSources = [
   ['msit-research', '연구개발'],
   ['ts-tuning', '자동차 정비·튜닝'],
   ['namyangju-commerce', '통신판매'],
+  ['ftc-commerce', '통신판매 · 공정거래위원회'],
   ['broadcast-license', '방송'],
   ['moel-labor', '근로자공급'],
 ] as const;

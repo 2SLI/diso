@@ -70,6 +70,38 @@ DB 갱신 후 `node scripts/exportPublicBusinessDirectory.mjs`로 공개 검색 
 목록은 방문자마다 Firestore 전체를 조회하지 않도록 Hosting에서 제공하며, 자동 실시간 동기화는 아닙니다.
 추출 후 `npm run build` 및 `npx firebase deploy --only hosting --project velder-381f3`로 반영합니다.
 
+## 공정거래위원회 통신판매업 API 수집
+
+공식 명세: https://www.data.go.kr/data/15126311/openapi.do
+
+`MllBs_2Service/getMllBsInfo_2`를 Node에서만 호출합니다. Git에서 제외되는
+`.env.mll.local`에 `DATA_GO_KR_SERVICE_KEY`를 설정합니다. 키는 브라우저·배포 JSON에 포함하지 않습니다.
+
+```sh
+# 첫 페이지 검증 (DB 변경 없음)
+node --env-file=.env.mll.local scripts/syncMllBusinesses.mjs
+# 정상영업 자료 100건씩 최대 10페이지 저장, 재실행하면 다음 페이지부터 재개
+node --env-file=.env.mll.local scripts/syncMllBusinesses.mjs --write --max-pages=10
+node --test scripts/lib/mllApi.test.mjs
+```
+
+Firebase CLI 로그인 계정으로 `publicBusinessProfiles`에 저장합니다.
+사업자번호가 있으면 기존 CSV와 같은 문서 ID를 사용하고, 없으면 인허가관리번호로 식별합니다.
+기존 업종·연락처 등은 유지하며 출처를 병합합니다. 여러 신고가 같은 사업자번호를 가지면 한 문서에 출처 기록을 합칩니다.
+관리부서 전화번호를 업체 전화번호로 표시하지 않으며, 대표자명·이메일은 수집 파일에 보관하지 않습니다.
+
+`.local-data/mll-normal-v1`에 비공개 페이지 파일과 DB 저장 완료 체크포인트를 유지합니다.
+실패한 페이지는 저장 파일에서 재시도하며, 동시 DB 변경이 있으면 덮어쓰지 않고 중단합니다.
+API 페이지 순서가 갱신 중 변동할 수 있어 이 수집만으로 전국 자료의 누락 없는 동기화를 보장하지 않습니다.
+전체 수백만 건을 단일 공개 JSON으로 내보내지 마세요. 대량 수집 전 서버 검색·증분 갱신 및 비용 한도를 설계해야 합니다.
+현재는 제한된 초기 수집이며, 정기 자동 수집은 설정하지 않았습니다.
+DB 저장 후 위의 공개 목록 추출 및 Hosting 배포 절차로 검색 화면에 반영합니다.
+
+사업자 상태조회는 `verifyBusinessStatus` callable 함수로 처리합니다.
+`functions/.env`에도 `DATA_GO_KR_SERVICE_KEY`를 설정한 뒤 해당 함수를 배포하세요.
+로그인이 필요하며 사용자별 분당 5회로 제한합니다. 기존 `VITE_ODCLOUD_BUSINESS_API_KEY`는 제거했습니다.
+과거 프런트엔드에 포함된 키는 새 배포만으로 노출 이력이 사라지지 않으므로 포털에서 재발급 후 서버 설정을 교체하세요.
+
 ## 다음 개발 우선순위
 
 1. 기업 가입 및 인증

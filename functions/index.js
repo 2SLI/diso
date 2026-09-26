@@ -3,6 +3,7 @@ import { initializeApp } from 'firebase-admin/app';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { defineString } from 'firebase-functions/params';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
+export { verifyBusinessStatus } from './businessVerification.js';
 
 initializeApp();
 const database = getFirestore();
