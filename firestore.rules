@@ -11,6 +11,10 @@ service cloud.firestore {
         && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'OWNER'
           || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'ADMIN');
     }
+    function canActFor(companyId) {
+      return memberOf(companyId)
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['OWNER', 'ADMIN', 'PURCHASER', 'SALES'];
+    }
 
     match /companies/{companyId} {
       allow read: if true;
@@ -73,7 +77,7 @@ service cloud.firestore {
 
     match /companyPosts/{postId} {
       allow read: if true;
-      allow create: if signedIn() && memberOf(request.resource.data.companyId)
+      allow create: if signedIn() && canActFor(request.resource.data.companyId)
         && request.resource.data.authorId == request.auth.uid
         && request.resource.data.companyName == get(/databases/$(database)/documents/companies/$(request.resource.data.companyId)).data.name
         && request.resource.data.companyIndustry == get(/databases/$(database)/documents/companies/$(request.resource.data.companyId)).data.industry
@@ -88,7 +92,7 @@ service cloud.firestore {
     match /postInquiries/{inquiryId} {
       allow read: if signedIn() && (memberOf(resource.data.buyerCompanyId) || memberOf(resource.data.supplierCompanyId));
       allow create: if signedIn() && request.resource.data.createdBy == request.auth.uid
-        && memberOf(request.resource.data.senderCompanyId)
+        && canActFor(request.resource.data.senderCompanyId)
         && exists(/databases/$(database)/documents/companyPosts/$(request.resource.data.postId))
         && request.resource.data.postTitle == get(/databases/$(database)/documents/companyPosts/$(request.resource.data.postId)).data.title
         && (get(/databases/$(database)/documents/companyPosts/$(request.resource.data.postId)).data.type == 'DEMAND'

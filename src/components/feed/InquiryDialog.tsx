@@ -10,11 +10,13 @@ export function InquiryDialog({
   post,
   company,
   userId,
+  canAct = true,
   onClose,
 }: {
   post: CompanyPost | null;
   company: Company | null;
   userId?: string;
+  canAct?: boolean;
   onClose: () => void;
 }) {
   const [error, setError] = useState('');
@@ -53,6 +55,8 @@ export function InquiryDialog({
           </Link>
           이 필요합니다.
         </p>
+      ) : !canAct ? (
+        <p className="text-sm">보기 전용 권한으로는 회사 이름의 문의를 보낼 수 없습니다.</p>
       ) : !company ? (
         <p className="text-sm">
           문의하려면{' '}

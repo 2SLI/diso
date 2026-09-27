@@ -19,7 +19,8 @@ import type { CompanyPost } from '../types/feed';
 
 export default function FeedPage() {
   const { user } = useAuth();
-  const { company } = useMyCompany(user?.uid);
+  const { company, userProfile } = useMyCompany(user?.uid);
+  const canAct = userProfile?.role !== 'VIEWER';
   const { posts, loading, error, refresh } = useFeed();
   const [selected, setSelected] = useState<CompanyPost | null>(null);
   const [followed, setFollowed] = useState<string[]>([]);
@@ -111,12 +112,14 @@ export default function FeedPage() {
       </div>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
         <div className="min-w-0 space-y-4">
-          {user && company ? (
+          {user && company && canAct ? (
             <PostComposer company={company} userId={user.uid} onCreated={refresh} />
           ) : (
             <div className="rounded-2xl border border-slate-200 bg-white p-5 text-sm text-slate-600">
               {user
-                ? '회사 소속 승인이 완료되면 기업 이름으로 글을 쓸 수 있습니다.'
+                ? canAct
+                  ? '회사 소속 승인이 완료되면 기업 이름으로 글을 쓸 수 있습니다.'
+                  : '보기 전용 권한으로는 게시글을 작성할 수 없습니다.'
                 : '로그인하고 회사 프로필을 연결하면 글을 작성하고 문의할 수 있습니다.'}{' '}
               <Link
                 className="ml-1 font-semibold text-brand-600"
@@ -235,6 +238,7 @@ export default function FeedPage() {
         post={selected}
         company={company}
         userId={user?.uid}
+        canAct={canAct}
         onClose={() => setSelected(null)}
       />
     </div>
