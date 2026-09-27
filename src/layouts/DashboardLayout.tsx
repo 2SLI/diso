@@ -7,10 +7,13 @@ import {
   Send,
   Settings,
   Search,
+  Newspaper,
 } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 const items = [
   ['대시보드', '/dashboard', LayoutDashboard],
+  ['기업 피드', '/feed', Newspaper],
+  ['기업 문의함', '/inquiries', FileText],
   ['기업 프로필', '/my-company', Building2],
   ['직원 및 권한', '/team', Settings],
   ['내 커리어 프로필', '/profile', Settings],

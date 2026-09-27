@@ -4,6 +4,7 @@ import {
   Handshake,
   Home,
   LayoutDashboard,
+  Newspaper,
   LogOut,
   Search,
   UserCircle,
@@ -16,6 +17,7 @@ export function MainLayout() {
   const { user, logout } = useAuth();
   const links: { label: string; path: string; icon: LucideIcon }[] = user
     ? [
+        { label: '기업 피드', path: '/feed', icon: Newspaper },
         { label: '기업 찾기', path: '/companies', icon: Search },
         { label: 'RFQ', path: '/rfqs', icon: FileText },
         { label: '받은 견적', path: '/quotes', icon: FileText },
@@ -23,14 +25,15 @@ export function MainLayout() {
         { label: '대시보드', path: '/dashboard', icon: LayoutDashboard },
       ]
     : [
+        { label: '기업 피드', path: '/feed', icon: Newspaper },
         { label: '기업 찾기', path: '/companies', icon: Search },
         { label: '협업/RFQ', path: '/rfqs', icon: FileText },
         { label: '거래처', path: '/connections', icon: Handshake },
       ];
   const mobileItems = [
-    ['홈', '/', Home],
+    ['피드', '/feed', Newspaper],
     ['기업 찾기', '/companies', Search],
-    ['RFQ', '/rfqs', FileText],
+    ['문의함', '/inquiries', FileText],
     ['거래처', '/connections', Handshake],
     ['대시보드', '/dashboard', LayoutDashboard],
   ];

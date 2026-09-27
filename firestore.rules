@@ -70,5 +70,56 @@ service cloud.firestore {
       allow update: if signedIn() && memberOf(resource.data.companyBId);
       allow delete: if signedIn() && memberOf(resource.data.companyAId);
     }
+
+    match /companyPosts/{postId} {
+      allow read: if true;
+      allow create: if signedIn() && memberOf(request.resource.data.companyId)
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.companyName == get(/databases/$(database)/documents/companies/$(request.resource.data.companyId)).data.name
+        && request.resource.data.companyIndustry == get(/databases/$(database)/documents/companies/$(request.resource.data.companyId)).data.industry
+        && request.resource.data.companyRegion == get(/databases/$(database)/documents/companies/$(request.resource.data.companyId)).data.region
+        && request.resource.data.keys().hasOnly(['companyId', 'companyName', 'companyIndustry', 'companyRegion', 'authorId', 'type', 'title', 'body', 'createdAt'])
+        && request.resource.data.type in ['SUPPLY', 'DEMAND', 'CAPACITY', 'NEWS']
+        && request.resource.data.title is string && request.resource.data.title.size() >= 3 && request.resource.data.title.size() <= 100
+        && request.resource.data.body is string && request.resource.data.body.size() >= 10 && request.resource.data.body.size() <= 2000;
+      allow update, delete: if false;
+    }
+
+    match /postInquiries/{inquiryId} {
+      allow read: if signedIn() && (memberOf(resource.data.buyerCompanyId) || memberOf(resource.data.supplierCompanyId));
+      allow create: if signedIn() && request.resource.data.createdBy == request.auth.uid
+        && memberOf(request.resource.data.senderCompanyId)
+        && exists(/databases/$(database)/documents/companyPosts/$(request.resource.data.postId))
+        && request.resource.data.postTitle == get(/databases/$(database)/documents/companyPosts/$(request.resource.data.postId)).data.title
+        && (get(/databases/$(database)/documents/companyPosts/$(request.resource.data.postId)).data.type == 'DEMAND'
+          ? request.resource.data.buyerCompanyId == get(/databases/$(database)/documents/companyPosts/$(request.resource.data.postId)).data.companyId
+            && request.resource.data.supplierCompanyId == request.resource.data.senderCompanyId
+          : request.resource.data.supplierCompanyId == get(/databases/$(database)/documents/companyPosts/$(request.resource.data.postId)).data.companyId
+            && request.resource.data.buyerCompanyId == request.resource.data.senderCompanyId)
+        && request.resource.data.buyerCompanyId != request.resource.data.supplierCompanyId
+        && request.resource.data.buyerCompanyName == get(/databases/$(database)/documents/companies/$(request.resource.data.buyerCompanyId)).data.name
+        && request.resource.data.supplierCompanyName == get(/databases/$(database)/documents/companies/$(request.resource.data.supplierCompanyId)).data.name
+        && (request.resource.data.senderCompanyId == request.resource.data.buyerCompanyId || request.resource.data.senderCompanyId == request.resource.data.supplierCompanyId)
+        && request.resource.data.status == 'PENDING'
+        && request.resource.data.type in ['QUOTE_REQUEST', 'SUPPLY_PROPOSAL', 'COLLABORATION', 'MEETING']
+        && request.resource.data.message is string && request.resource.data.message.size() >= 10 && request.resource.data.message.size() <= 1000;
+      allow update, delete: if false;
+    }
+
+    match /companyFollows/{followId} {
+      allow read, delete: if signedIn() && resource.data.userId == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid
+        && followId == request.auth.uid + '_' + request.resource.data.companyId
+        && exists(/databases/$(database)/documents/companies/$(request.resource.data.companyId));
+      allow update: if false;
+    }
+
+    match /companyBookmarks/{bookmarkId} {
+      allow read, delete: if signedIn() && resource.data.userId == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid
+        && bookmarkId == request.auth.uid + '_' + request.resource.data.companyId
+        && exists(/databases/$(database)/documents/companies/$(request.resource.data.companyId));
+      allow update: if false;
+    }
   }
 }

@@ -23,6 +23,8 @@ import { industryGroups, regions } from '../constants/industries';
 import { useAuth } from '../hooks/useAuth';
 import { useCompanies, useCompany } from '../hooks/useCompanies';
 import { useMyCompany } from '../hooks/useMyCompany';
+import { useFeed } from '../hooks/useFeed';
+import { PostCard } from '../components/feed/PostCard';
 import { requestConnection } from '../services/connectionService';
 import { verifyMyCompanyBusinessNumber } from '../services/businessVerificationService';
 import { getCachedDartCompanyProfile } from '../services/dartProfileService';
@@ -243,58 +245,70 @@ export function CompaniesPage() {
         )}
       </section>
       <p className="mt-3 text-xs text-slate-400">
-        위 상세 필터는 PartnerBase 등록 기업에 적용됩니다. 공공데이터 업체는 아래 업종·지역 필터를 사용하세요.
+        위 상세 필터는 PartnerBase 등록 기업에 적용됩니다. 공공데이터 업체는 아래 업종·지역 필터를
+        사용하세요.
       </p>
       <PublicBusinessDirectory keyword={keyword} />
       <section className="mt-6 rounded-xl border border-amber-200 bg-amber-50/40 p-5 shadow-sm">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold text-amber-700">외부 공시 데이터 · OPEN DART</p>
-              <h2 className="mt-1 text-lg font-bold">
-                {hasSearchKeyword ? '공시기업 검색 결과' : '상장·등록 공시기업'}
-              </h2>
-              <p className="mt-1 text-sm text-slate-500">
-                {hasSearchKeyword
-                  ? '금융감독원 전자공시 기준 기업 목록입니다.'
-                  : `${dartDirectoryTotal.toLocaleString()}개 기업의 기본정보를 제공합니다. 검색하면 전체 공시기업을 찾습니다.`}
-              </p>
-              <p className="mt-2 text-xs font-medium text-amber-800">
-                PartnerBase에 등록한 기업 프로필이 아닙니다. 협업 요청과 상세 서비스 정보는 등록 기업에서만 이용할 수 있습니다.
-              </p>
-            </div>
-            {hasSearchKeyword && dartLoading && <span className="text-xs text-slate-400">검색 중…</span>}
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold text-amber-700">외부 공시 데이터 · OPEN DART</p>
+            <h2 className="mt-1 text-lg font-bold">
+              {hasSearchKeyword ? '공시기업 검색 결과' : '상장·등록 공시기업'}
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              {hasSearchKeyword
+                ? '금융감독원 전자공시 기준 기업 목록입니다.'
+                : `${dartDirectoryTotal.toLocaleString()}개 기업의 기본정보를 제공합니다. 검색하면 전체 공시기업을 찾습니다.`}
+            </p>
+            <p className="mt-2 text-xs font-medium text-amber-800">
+              PartnerBase에 등록한 기업 프로필이 아닙니다. 협업 요청과 상세 서비스 정보는 등록
+              기업에서만 이용할 수 있습니다.
+            </p>
           </div>
-          {displayedDartCompanies.length > 0 && (
-            <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-              {displayedDartCompanies.map((dartCompany) => (
-                <Link
-                  key={dartCompany.corpCode}
-                  to={`/companies/dart-${dartCompany.corpCode}`}
-                  className="rounded-lg border border-amber-200 bg-white p-4 transition hover:border-amber-400 hover:bg-amber-50/40"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-semibold text-slate-900">{dartCompany.corpName}</p>
-                    {dartCompany.stockCode && <Badge>{dartCompany.stockCode}</Badge>}
-                  </div>
-                  <p className="mt-2 text-xs font-medium text-amber-800">외부 데이터 · OpenDART 공시기업</p>
-                </Link>
-              ))}
-            </div>
+          {hasSearchKeyword && dartLoading && (
+            <span className="text-xs text-slate-400">검색 중…</span>
           )}
-          {hasSearchKeyword && !dartLoading && displayedDartCompanies.length === 0 && (
-            <p className="mt-4 text-sm text-slate-500">일치하는 공시기업이 없습니다.</p>
-          )}
-          {!hasSearchKeyword && dartDirectoryLoading && displayedDartCompanies.length === 0 && (
-            <p className="mt-4 text-sm text-slate-500">공시기업 목록을 불러오는 중…</p>
-          )}
-          {!hasSearchKeyword && dartDirectory.length > 0 && dartDirectory.length < dartDirectoryTotal && (
+        </div>
+        {displayedDartCompanies.length > 0 && (
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+            {displayedDartCompanies.map((dartCompany) => (
+              <Link
+                key={dartCompany.corpCode}
+                to={`/companies/dart-${dartCompany.corpCode}`}
+                className="rounded-lg border border-amber-200 bg-white p-4 transition hover:border-amber-400 hover:bg-amber-50/40"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-semibold text-slate-900">{dartCompany.corpName}</p>
+                  {dartCompany.stockCode && <Badge>{dartCompany.stockCode}</Badge>}
+                </div>
+                <p className="mt-2 text-xs font-medium text-amber-800">
+                  외부 데이터 · OpenDART 공시기업
+                </p>
+              </Link>
+            ))}
+          </div>
+        )}
+        {hasSearchKeyword && !dartLoading && displayedDartCompanies.length === 0 && (
+          <p className="mt-4 text-sm text-slate-500">일치하는 공시기업이 없습니다.</p>
+        )}
+        {!hasSearchKeyword && dartDirectoryLoading && displayedDartCompanies.length === 0 && (
+          <p className="mt-4 text-sm text-slate-500">공시기업 목록을 불러오는 중…</p>
+        )}
+        {!hasSearchKeyword &&
+          dartDirectory.length > 0 &&
+          dartDirectory.length < dartDirectoryTotal && (
             <div className="mt-4 flex justify-center">
-              <Button variant="secondary" onClick={loadMoreDartCompanies} disabled={dartDirectoryLoading}>
+              <Button
+                variant="secondary"
+                onClick={loadMoreDartCompanies}
+                disabled={dartDirectoryLoading}
+              >
                 {dartDirectoryLoading ? '불러오는 중…' : '공시기업 더 보기'}
               </Button>
             </div>
           )}
-        </section>
+      </section>
       {loading ? (
         <p className="py-10 text-center text-sm text-slate-500">기업 정보를 불러오는 중…</p>
       ) : error ? (
@@ -321,7 +335,10 @@ export function CompaniesPage() {
         <section className="mt-8 rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm text-slate-500">
           <p className="text-xs font-semibold text-brand-600">PARTNERBASE</p>
           <p className="mt-1 font-medium text-slate-700">PartnerBase 등록 기업이 아직 없습니다.</p>
-          <p className="mt-1">위 공공데이터·OpenDART 기업은 외부 목록이며, 기업이 직접 등록한 협업 프로필은 여기에 표시됩니다.</p>
+          <p className="mt-1">
+            위 공공데이터·OpenDART 기업은 외부 목록이며, 기업이 직접 등록한 협업 프로필은 여기에
+            표시됩니다.
+          </p>
         </section>
       )}
     </div>
@@ -397,6 +414,9 @@ function toPartnerCompany(dartCompany: DartCompanyProfile): Company {
 export function CompanyDetailPage() {
   const { companyId } = useParams();
   const dartCorpCode = companyId?.startsWith('dart-') ? companyId.slice(5) : undefined;
+  const { posts: activityPosts, loading: activityLoading } = useFeed(
+    dartCorpCode ? undefined : companyId,
+  );
   const {
     company: registeredCompany,
     loading: registeredLoading,
@@ -472,24 +492,25 @@ export function CompanyDetailPage() {
         </div>
       </div>
     );
-  const details = dartCorpCode && dartCompany
-    ? [
-        ['대표자', dartCompany.ceoName || '공시 정보 없음'],
-        ['설립일', dartCompany.establishedAt || '공시 정보 없음'],
-        ['기업 구분', company.companyType || '공시 정보 없음'],
-        ['사업자등록번호', dartCompany.businessRegistrationNumber || '공시 정보 없음'],
-        ['법인등록번호', dartCompany.legalRegistrationNumber || '공시 정보 없음'],
-        ['대표 전화', dartCompany.phoneNumber || '공시 정보 없음'],
-      ]
-    : [
-        ['설립', company.foundedYear ? `${company.foundedYear}년` : '정보 미등록'],
-        ['임직원', company.employeeCount || '정보 미등록'],
-        ['기업 형태', company.companyType || '정보 미등록'],
-        [
-          '서비스 지역',
-          company.serviceRegions.length ? company.serviceRegions.join(', ') : '정보 미등록',
-        ],
-      ];
+  const details =
+    dartCorpCode && dartCompany
+      ? [
+          ['대표자', dartCompany.ceoName || '공시 정보 없음'],
+          ['설립일', dartCompany.establishedAt || '공시 정보 없음'],
+          ['기업 구분', company.companyType || '공시 정보 없음'],
+          ['사업자등록번호', dartCompany.businessRegistrationNumber || '공시 정보 없음'],
+          ['법인등록번호', dartCompany.legalRegistrationNumber || '공시 정보 없음'],
+          ['대표 전화', dartCompany.phoneNumber || '공시 정보 없음'],
+        ]
+      : [
+          ['설립', company.foundedYear ? `${company.foundedYear}년` : '정보 미등록'],
+          ['임직원', company.employeeCount || '정보 미등록'],
+          ['기업 형태', company.companyType || '정보 미등록'],
+          [
+            '서비스 지역',
+            company.serviceRegions.length ? company.serviceRegions.join(', ') : '정보 미등록',
+          ],
+        ];
   return (
     <div className="mx-auto max-w-6xl px-4 py-5 md:py-8">
       <Link to="/companies" className="text-sm font-medium text-slate-500 hover:text-brand-600">
@@ -514,7 +535,8 @@ export function CompanyDetailPage() {
                 )}
               </div>
               <p className="mt-2 text-sm text-slate-600">
-                {company.industry} · {company.region} · {dartCorpCode ? '외부 공시 정보' : 'PartnerBase 기업 프로필'}
+                {company.industry} · {company.region} ·{' '}
+                {dartCorpCode ? '외부 공시 정보' : 'PartnerBase 기업 프로필'}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -541,7 +563,8 @@ export function CompanyDetailPage() {
             <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
               <p className="font-semibold">OpenDART 외부 공시기업 정보</p>
               <p className="mt-1 text-amber-800">
-                이 기업은 PartnerBase에 직접 등록한 프로필이 아닙니다. 공시 목록 정보만 제공하며, 협업 요청·RFQ·직원 정보는 기업 등록 후에 표시됩니다.
+                이 기업은 PartnerBase에 직접 등록한 프로필이 아닙니다. 공시 목록 정보만 제공하며,
+                협업 요청·RFQ·직원 정보는 기업 등록 후에 표시됩니다.
               </p>
             </div>
           )}
@@ -562,6 +585,11 @@ export function CompanyDetailPage() {
           <a href="#culture" className="shrink-0 py-3.5 hover:text-slate-900">
             조직·문화
           </a>
+          {!dartCorpCode && (
+            <a href="#activity" className="shrink-0 py-3.5 hover:text-slate-900">
+              활동
+            </a>
+          )}
         </nav>
       </section>
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
@@ -584,8 +612,9 @@ export function CompanyDetailPage() {
             <Card id="business" className="rounded-xl p-5 md:p-6">
               <SectionTitle icon={<BriefcaseBusiness size={19} />} title="OpenDART 제공 범위" />
               <p className="mt-4 leading-7 text-slate-600">
-                OpenDART 기업개황은 대표자, 주소, 홈페이지, 설립일, 법인·사업자등록번호 등 공시 기본정보를 제공합니다.
-                제품·서비스, 인증, 조직문화, 협업 가능 분야는 공시 표준 항목이 아니므로 기업이 PartnerBase 프로필을 등록한 뒤 표시됩니다.
+                OpenDART 기업개황은 대표자, 주소, 홈페이지, 설립일, 법인·사업자등록번호 등 공시
+                기본정보를 제공합니다. 제품·서비스, 인증, 조직문화, 협업 가능 분야는 공시 표준
+                항목이 아니므로 기업이 PartnerBase 프로필을 등록한 뒤 표시됩니다.
               </p>
             </Card>
           ) : (
@@ -601,7 +630,8 @@ export function CompanyDetailPage() {
                 <SectionTitle icon={<CheckCircle2 size={19} />} title="기업 신뢰 정보" />
                 <TagBlock title="인증·수상" tags={company.certifications} />
                 <div className="mt-5 rounded-lg bg-slate-50 p-4 text-sm text-slate-600">
-                  사업자등록번호와 기업 정보는 회사 관리자 검토 절차를 통해 인증 상태를 부여할 수 있습니다.
+                  사업자등록번호와 기업 정보는 회사 관리자 검토 절차를 통해 인증 상태를 부여할 수
+                  있습니다.
                 </div>
               </Card>
               <Card id="culture" className="rounded-xl p-5 md:p-6">
@@ -609,6 +639,16 @@ export function CompanyDetailPage() {
                 <TagBlock title="기업 문화" tags={company.cultureTags ?? []} />
                 <TagBlock title="복리후생·지원" tags={company.benefits ?? []} />
               </Card>
+              <section id="activity" className="space-y-3">
+                <h2 className="text-lg font-bold">기업 활동</h2>
+                {activityLoading ? (
+                  <p className="text-sm text-slate-500">소식을 불러오는 중…</p>
+                ) : activityPosts.length ? (
+                  activityPosts.slice(0, 5).map((post) => <PostCard key={post.id} post={post} />)
+                ) : (
+                  <Card className="text-sm text-slate-500">아직 게시한 소식이 없습니다.</Card>
+                )}
+              </section>
             </>
           )}
         </div>

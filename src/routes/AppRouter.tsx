@@ -19,6 +19,8 @@ const CompanyDetailPage = lazy(async () => ({
   default: (await import('../pages/CompanyPages')).CompanyDetailPage,
 }));
 const PublicBusinessDetailPage = lazy(() => import('../pages/PublicBusinessDetailPage'));
+const FeedPage = lazy(() => import('../pages/FeedPage'));
+const InquiriesPage = lazy(() => import('../pages/InquiriesPage'));
 const MyCompanyPage = lazy(async () => ({
   default: (await import('../pages/CompanyPages')).MyCompanyPage,
 }));
@@ -58,6 +60,7 @@ export function AppRouter() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/join-company" element={<JoinCompanyPage />} />
           <Route path="/companies" element={<CompaniesPage />} />
+          <Route path="/feed" element={<FeedPage />} />
           <Route path="/companies/public/:businessId" element={<PublicBusinessDetailPage />} />
           <Route path="/companies/:companyId" element={<CompanyDetailPage />} />
           <Route element={<ProtectedRoute />}>
@@ -68,6 +71,7 @@ export function AppRouter() {
             <Route path="/rfqs" element={<RfqPage />} />
             <Route path="/quotes" element={<QuotesPage />} />
             <Route path="/connections" element={<ConnectionsPage />} />
+            <Route path="/inquiries" element={<InquiriesPage />} />
             <Route path="/settings" element={<PlaceholderPage title="설정" />} />
           </Route>
         </Route>

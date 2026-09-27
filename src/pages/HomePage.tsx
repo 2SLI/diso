@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import { CompanyCard } from '../components/company/CompanyCard';
 import { Badge, Button, Input } from '../components/common/ui';
 import { useCompanies } from '../hooks/useCompanies';
+import { useFeed } from '../hooks/useFeed';
+import { PostCard } from '../components/feed/PostCard';
 
 export function HomePage() {
   const { companies } = useCompanies();
   const featured = companies.slice(0, 3);
+  const { posts } = useFeed();
 
   return (
     <>
@@ -23,9 +26,9 @@ export function HomePage() {
             우리 회사와 거래 가능성이 높은 기업을 찾을 수 있습니다.
           </p>
           <div className="mx-auto mt-7 grid max-w-sm grid-cols-2 gap-2 md:mt-8">
-            <Link to="/companies">
+            <Link to="/feed">
               <Button className="w-full px-2">
-                기업 찾아보기 <ArrowRight className="ml-1" size={15} />
+                기업 소식 보기 <ArrowRight className="ml-1" size={15} />
               </Button>
             </Link>
             <Link to="/register">
@@ -63,6 +66,34 @@ export function HomePage() {
             예: CNC 가공 · SMPS · 물류 · OEM · 웹 개발
           </p>
         </div>
+      </section>
+      <section className="mx-auto max-w-7xl px-4 py-10 md:py-14">
+        <div className="mb-5 flex items-end justify-between">
+          <div>
+            <p className="text-xs font-bold text-brand-600">COMPANY ACTIVITY</p>
+            <h2 className="mt-1 text-xl font-bold md:text-2xl">기업의 새로운 소식</h2>
+            <p className="mt-2 text-sm text-slate-500">
+              실제 기업이 올린 공급·협업 기회를 확인하세요.
+            </p>
+          </div>
+          <Link to="/feed" className="text-sm font-semibold text-brand-600">
+            피드 보기 →
+          </Link>
+        </div>
+        {posts.length ? (
+          <div className="grid gap-4 md:grid-cols-2">
+            {posts.slice(0, 2).map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center text-sm text-slate-500">
+            첫 기업 소식을 기다리고 있습니다.{' '}
+            <Link className="font-semibold text-brand-600" to="/feed">
+              피드에서 시작하기 →
+            </Link>
+          </div>
+        )}
       </section>
       {featured.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-10 md:py-16">
